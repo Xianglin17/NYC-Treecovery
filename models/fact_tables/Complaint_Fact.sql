@@ -1,13 +1,38 @@
 with complaint as (
-    select Complaint_Type_Dim_ID from {{ref('Complaint_Dimension')}}
+    select * from {{ref('Complaint_Dimension')}}
 ),
 agency as (
-    select Agency_Dim_ID from {{ref('Agency_Dimension')}}
+    select * from {{ref('Agency_Dimension')}} 
 ),
 datetable as (
-    select Date_Dim_ID from {{ref('Date_Dimension')}}
-), 
+    select *
+    from {{ref('Date_Dimension')}} 
+),
 location as (
-    select location_dim_ID as Location_Dim_ID from {{ref('Location_Dimension')}}
+    select *
+    from {{ref('Location_Dimension')}} 
+),
+total as (
+    select Created_Year as Year, 
+            Created_Month as Month, 
+            Created_Day as Day,
+            Date_ID,
+            latitude as Latitude,
+            longitude as Longtitude,
+            city as City,
+            incident_zip as ZipCode,
+            borough as Borough,
+            state as STATE,
+            agency, 
+            agency_name,
+            complaint_type,
+            status
+            from {{ref('311_complaints')}} 
 )
-select * from complaint, agency, datetable, location
+
+select Complaint_Type_Dim_ID,Agency_Dim_ID,Date_Dim_ID,Location_Dim_ID
+from Total 
+LEFT JOIN complaintUSING (complaint_type,status)
+LEFT JOIN agency USING (agency,agency_name)
+LEFT JOIN datetable USING (Year, Month, Day, Date_ID)
+LEFT JOIN location USING (Latitude, Longtitude, City, ZipCode,Borough, STATE)
