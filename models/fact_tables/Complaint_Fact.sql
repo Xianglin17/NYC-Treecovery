@@ -4,13 +4,25 @@ with complaint_table as (
 agency_table as (
     select * from {{ref('Agency_Dimension')}} 
 ),
-datetable_table as (
-    select *
-    from {{ref('Date_Dimension')}} 
+date_table as (
+    select * from {{ref('Date_Dimension')}} 
 ),
 location_table as (
     select *
     from {{ref('Location_Dimension')}} 
+),
+closed_date_table as (
+    select  Date_Dim_ID as Closed_Date_Dim_ID,
+            Date_ID as Closed_Date  
+    from(select          
+            Closed_Year as Year, 
+            Closed_Month as Month, 
+            Closed_Day as Day,
+            Closed_Date as Date_ID 
+          from {{ref('311_complaints')}}
+          ) 
+    Left Join 
+        (select * from {{ref('Date_Dimension')}} ) USING (Year, Month, Day, Date_ID)
 ),
 total_table as (
     select Created_Year as Year, 
@@ -29,12 +41,31 @@ total_table as (
             status
             from {{ref('311_complaints')}} 
 )
+SELECT Complaint_Type_Dim_ID, 
+       Agency_Dim_ID, 
+       Created_Date_Dim_ID,
+       Closed_Date_Dim_ID,
+       Location_Dim_ID,
+       count(Final_ID) as Number_of_Complaint,
+       ABS(date_diff(DATE(Closed_Date),DATE(Date_ID),day)) as Average_Date_Gap
 
-select Complaint_Type_Dim_ID, Agency_Dim_ID, Date_Dim_ID,Location_Dim_ID, count(*) as Number_of_Complaint
-from total_table 
+FROM (
+SELECT Complaint_Type_Dim_ID, 
+       Agency_Dim_ID, 
+       Date_Dim_ID as Created_Date_Dim_ID,
+       Closed_Date_Dim_ID,
+       Location_Dim_ID,
+       ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as Final_ID,
+       Closed_Date,
+       Date_ID
+
+
+from (total_table 
 LEFT JOIN complaint_table USING (complaint_type,status)
 LEFT JOIN agency_table USING (agency,agency_name)
-LEFT JOIN datetable_table USING (Year, Month, Day, Date_ID)
-LEFT JOIN location_table USING (Latitude,Longtitude,City,ZipCode,Borough,STATE)
-Group by Complaint_Type_Dim_ID, Agency_Dim_ID, Date_Dim_ID,Location_Dim_ID
-order by Number_of_Complaint DESC
+LEFT JOIN date_table USING (Year, Month, Day, Date_ID)
+LEFT JOIN location_table USING (Latitude,Longtitude,City,ZipCode,Borough,STATE)),
+closed_date_table
+)
+
+Group by Complaint_Type_Dim_ID, Agency_Dim_ID, Created_Date_Dim_ID, Location_Dim_ID, Closed_Date_Dim_ID, Closed_Date, Date_ID
