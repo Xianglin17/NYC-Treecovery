@@ -47,7 +47,7 @@ SELECT Complaint_Type_Dim_ID,
        Closed_Date_Dim_ID,
        Location_Dim_ID,
        count(Final_ID) as Number_of_Complaint,
-       ABS(date_diff(DATE(Closed_Date),DATE(Date_ID),day)) as Average_Date_Gap
+       ABS(date_diff(DATE(Closed_Date),DATE(Date_ID),day)) as Date_Gap
 
 FROM (
 SELECT Complaint_Type_Dim_ID, 
