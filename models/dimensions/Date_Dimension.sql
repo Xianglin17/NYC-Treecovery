@@ -2,12 +2,13 @@
     materialized="table"
 )}}
 
-with all_date as (select * from {{ref('stg_complaints_date')}}
+with union_date as (select * from {{ref('stg_complaints_date')}}
 Union ALL
 select * from {{ref('stg_weather_date')}}
 )
 
-select *,ROW_NUMBER() OVER (ORDER BY (SELECT Date_ID)) AS Date_dim_ID
+select *
 FROM(
 select DISTINCT *
-from all_date)
+from union_date)
+Left Join {{ref('all_date')}} USING (DATE_ID)
