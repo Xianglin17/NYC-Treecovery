@@ -16,15 +16,18 @@ location_table as (
     from {{ref('Location_Dimension')}} 
 ),
 closed_date_table as (
-    select  ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as Closed_Date_Dim_ID,
-            Date_ID as Closed_Date  
-    from(select distinct    
-            Closed_Year as Year, 
-            Closed_Month as Month, 
-            Closed_Day as Day,
-            Closed_Date as Date_ID 
-          from {{ref('311_complaints')}}
+    select  Date_Dim_ID as Closed_Date_Dim_ID,
+            DATE_ID as Closed_Date
+
+          FROM (select DISTINCT
+                Closed_Year as Year, 
+                Closed_Month as Month, 
+                Closed_Day as Day,
+                Closed_Date as DATE_ID,
+                from {{ref('311_complaints')}}
           ) 
+    INNER JOIN {{ref('all_date')}} USING (DATE_ID)
+
 ),
 total_table as (
     select Created_Year as Year, 
