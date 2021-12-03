@@ -1,3 +1,7 @@
+{{ config (
+    materialized="table"
+)}}
+
 with alert_levels_table as (
     select * from {{ref('Alert_Levels_Dimension')}}
 ),

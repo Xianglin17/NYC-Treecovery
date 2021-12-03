@@ -1,3 +1,6 @@
+{{ config (
+    materialized="table"
+)}}
 with total as(
 select * 
 from {{ref('stg_311_location')}}

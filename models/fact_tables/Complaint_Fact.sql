@@ -1,3 +1,7 @@
+{{ config (
+    materialized="table"
+)}}
+
 with complaint_table as (
     select * from {{ref('Complaint_Dimension')}}
 ),

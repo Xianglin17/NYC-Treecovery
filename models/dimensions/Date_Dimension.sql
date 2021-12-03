@@ -1,3 +1,7 @@
+{{ config (
+    materialized="table"
+)}}
+
 with all_date as (select * from {{ref('stg_complaints_date')}}
 Union ALL
 select * from {{ref('stg_weather_date')}}
