@@ -18,7 +18,7 @@ location_table as (
 closed_date_table as (
     select  Date_Dim_ID as Closed_Date_Dim_ID,
             Date_ID as Closed_Date  
-    from(select          
+    from(select      
             Closed_Year as Year, 
             Closed_Month as Month, 
             Closed_Day as Day,
@@ -50,7 +50,7 @@ SELECT Complaint_Type_Dim_ID,
        Created_Date_Dim_ID,
        Closed_Date_Dim_ID,
        Location_Dim_ID,
-       count(Final_ID) as Number_of_Complaint,
+       count(*) as Number_of_Complaint,
        ABS(date_diff(DATE(Closed_Date),DATE(Date_ID),day)) as Date_Gap
 
 FROM (
@@ -59,7 +59,6 @@ SELECT Complaint_Type_Dim_ID,
        Date_Dim_ID as Created_Date_Dim_ID,
        Closed_Date_Dim_ID,
        Location_Dim_ID,
-       ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as Final_ID,
        Closed_Date,
        Date_ID
 
