@@ -1,12 +1,11 @@
-NYC Treecovery
+# NYC Treecovery
 
-CIS 4400
-Data Warehousing for Analytics
+CIS 4400 Data Warehousing for Analytics
 Section CMWA
 
 Group 7
 
-## Group Members
+### Group Members
 Xianglin Chen (XIANGLIN.CHEN@baruchmail.cuny.edu)
 Xingxing Gao (XINGXING.GAO@baruchmail.cuny.edu)
 Caroline A Miller (CAROLINE.MILLER@baruchmail.cuny.edu)
